@@ -5,6 +5,8 @@ import cors from 'cors'
 import multer from 'multer'
 import morgan from 'morgan'
 import cookieParser from 'cookie-parser'
+import userRouter from './routes/users/index.js'
+import contactRouter from './routes/contacts/index.js'
 
 const PORT = process.env.PORT || 5000
 
@@ -24,6 +26,9 @@ app.use(cookieParser())
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'))
 }
+
+app.use('/api/users', userRouter)
+app.use('/api/contacts', contactRouter)
 
 app.use((err, req, res, next) => {
     console.error(`Error: ${err.message}`)

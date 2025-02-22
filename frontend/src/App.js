@@ -5,7 +5,6 @@ import Home from './components/Home.js'
 
 const App = () => (
   <Router>
-    <Navbar />
     <Routes>
       <Route path="/" element={<Home />} />
     </Routes>

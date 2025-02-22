@@ -1,0 +1,28 @@
+body {
+    overflow-x: hidden;
+    width: 100vw;
+}
+
+div.main {
+    min-height: 500px;
+}
+
+footer {
+    display: flex;
+    align-items: center;
+    height: 250px;
+    width: 100vw;
+    background-color: #F8F9FA;
+}
+
+.login-form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.login-form form {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+}

@@ -1,0 +1,118 @@
+import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs'
+import User from '../../models/User.js'
+
+export const login = async (req, res, next) => {
+    try {
+        const { email, password } = req.body
+
+        const user = await User.findOne({ email })
+
+        if (!user || !(await user.comparePasswords(password))) {
+            return res.status(401).json({ message: "Invalid credentials" })
+        }
+
+        const accessToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET, 
+            { expiresIn: '15m' }
+        )
+
+        const refreshToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_REFRESH_TOKEN_SECRET,
+            { expiresIn: '7d' }
+        )
+
+        user.jwtRefreshToken = refreshToken
+        await user.save()
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production" ? true : false,
+            sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+
+        console.log("✅ Login successful, refresh token set:", refreshToken)
+
+        res.status(200).json({ 
+            message: "Login successful", 
+            accessToken 
+        })
+
+    } catch (err) {
+        next(err)
+    }
+}
+
+export const register = async (req, res, next) => {
+    try {
+        if (!req.body.firstName || !req.body.lastName || !req.body.password || !req.body.confirmPassword || !req.body.email) {
+            res.status(400)
+            throw new Error('Please provide all required fields')
+        }
+
+        const { firstName, lastName, password, confirmPassword, email } = req.body
+
+        if (password === confirmPassword) {
+            const salt = bcrypt.genSalt(10)
+            const hashedPassword = bcrypt.hash(password, salt)
+
+            const user = await User.create({
+                firstName,
+                lastName,
+                password: hashedPassword,
+                email
+            })
+
+            
+        }
+    } catch (err) {
+        next(err)
+    }
+}
+
+export const refreshAccessToken = async (req, res, next) => {
+    try {
+        const refreshToken = req.cookies?.refreshToken
+        if (!refreshToken) {
+            console.warn("❌ No refresh token found in request cookies.")
+            return res.status(401).json({ message: "Unauthorized - No refresh token" })
+        }
+
+        let decoded
+        try {
+            decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET)
+        } catch (error) {
+            console.error("❌ Expired or invalid refresh token:", error.message)
+            return res.status(401).json({ message: "Refresh token expired. Please log in again." })
+        }
+
+        const user = await User.findById(decoded.userId)
+        if (!user) {
+            console.error("❌ No user found for the provided refresh token.")
+            return res.status(403).json({ message: "Invalid refresh token" })
+        }
+    
+        if (user.jwtRefreshToken !== refreshToken) {
+            console.error("❌ Refresh token mismatch in database.")
+            // Optionally clear the stored token:
+            user.jwtRefreshToken = null
+            await user.save()
+            return res.status(403).json({ message: "Invalid refresh token" })
+        }
+
+        const newAccessToken = jwt.sign(
+            { userId: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "15m" }
+        )
+
+        res.status(200).json({ accessToken: newAccessToken })
+
+    } catch (err) {
+        console.error("❌ Error refreshing token:", err.message)
+        next(err)
+    }
+}

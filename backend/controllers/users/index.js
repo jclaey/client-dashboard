@@ -136,3 +136,51 @@ export const refreshAccessToken = async (req, res, next) => {
     }
 }
 
+export const logout = async (req, res, next) => {
+    try {
+        console.log("🔹 Received logout request...")
+
+        const refreshToken = req.cookies?.refreshToken
+        if (!refreshToken) {
+            console.warn("❌ No refresh token found in cookies before logout.")
+            res.status(400)
+            throw new Error('No refresh token found')
+        }
+
+        console.log("🔹 Refresh Token Found:", refreshToken)
+
+        let decoded
+        try {
+            decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET)
+        } catch (error) {
+            console.error("❌ Invalid or expired refresh token during logout:", error.message)
+            res.status(403)
+            throw new Error('Invalid or expired refresh token')
+        }
+
+        const user = await User.findById(decoded.userId)
+        if (!user) {
+            console.warn("❌ No user found for the provided refresh token.")
+            res.status(403)
+            throw new Error('Invalid refresh token')
+        }
+
+        user.jwtRefreshToken = null
+        await user.save()
+        console.log("✅ Refresh token removed from database")
+
+        res.cookie("refreshToken", "", {
+            httpOnly: true,
+            sameSite: "Lax",
+            secure: false,
+            expires: new Date(0),
+            maxAge: -1,
+        })
+
+        console.log("✅ Logout successful")
+        return res.status(200).json({ message: "Logout successful" })
+
+    } catch (err) {
+        next(err)
+    }
+}

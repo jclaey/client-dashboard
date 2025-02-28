@@ -9,7 +9,8 @@ export const login = async (req, res, next) => {
         const user = await User.findOne({ email })
 
         if (!user || !(await user.comparePasswords(password))) {
-            return res.status(401).json({ message: "Invalid credentials" })
+            res.status(401)
+            throw new Error('Invalid credentials')
         }
 
         const accessToken = jwt.sign(
@@ -93,7 +94,8 @@ export const refreshAccessToken = async (req, res, next) => {
         const refreshToken = req.cookies?.refreshToken
         if (!refreshToken) {
             console.warn("❌ No refresh token found in request cookies.")
-            return res.status(401).json({ message: "Unauthorized - No refresh token" })
+            res.status(401)
+            throw new Error('Unauthorized - No refresh token')
         }
 
         let decoded
@@ -101,13 +103,15 @@ export const refreshAccessToken = async (req, res, next) => {
             decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET)
         } catch (error) {
             console.error("❌ Expired or invalid refresh token:", error.message)
-            return res.status(401).json({ message: "Refresh token expired. Please log in again." })
+            res.status(401)
+            throw new Error('Refresh token expired. Please log in again.')
         }
 
         const user = await User.findById(decoded.userId)
         if (!user) {
             console.error("❌ No user found for the provided refresh token.")
-            return res.status(403).json({ message: "Invalid refresh token" })
+            res.status(403)
+            throw new Error('Invalid refresh token')
         }
     
         if (user.jwtRefreshToken !== refreshToken) {
@@ -115,7 +119,8 @@ export const refreshAccessToken = async (req, res, next) => {
             // Optionally clear the stored token:
             user.jwtRefreshToken = null
             await user.save()
-            return res.status(403).json({ message: "Invalid refresh token" })
+            res.status(403)
+            throw new Error('Invalid refresh token')
         }
 
         const newAccessToken = jwt.sign(
@@ -127,7 +132,7 @@ export const refreshAccessToken = async (req, res, next) => {
         res.status(200).json({ accessToken: newAccessToken })
 
     } catch (err) {
-        console.error("❌ Error refreshing token:", err.message)
         next(err)
     }
 }
+

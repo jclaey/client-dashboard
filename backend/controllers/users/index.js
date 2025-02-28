@@ -55,19 +55,34 @@ export const register = async (req, res, next) => {
 
         const { firstName, lastName, password, confirmPassword, email } = req.body
 
-        if (password === confirmPassword) {
-            const salt = bcrypt.genSalt(10)
-            const hashedPassword = bcrypt.hash(password, salt)
+        const existingUser = await User.findOne({ email })
 
-            const user = await User.create({
-                firstName,
-                lastName,
-                password: hashedPassword,
-                email
-            })
-
-            
+        if (existingUser) {
+            res.status(409)
+            throw new Error('Email is already in use')
         }
+
+        if (password !== confirmPassword) {
+            res.status(400)
+            throw new Error('Passwords do not match')
+        }
+
+        const salt = await bcrypt.genSalt(10)
+        const hashedPassword = await bcrypt.hash(password, salt)
+
+        const user = await User.create({
+            firstName,
+            lastName,
+            password: hashedPassword,
+            email
+        })
+
+        res.status(201).json({
+            _id: user._id,
+            firstName,
+            lastName,
+            email
+        })
     } catch (err) {
         next(err)
     }

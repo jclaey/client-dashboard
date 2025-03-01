@@ -1,16 +1,14 @@
 import mongoose from 'mongoose'
 const Schema = mongoose.Schema
 
-const ContactSchema = Schema({
-    name: {
-        firstName: {
-            type: String,
-            required: true
-        },
-        lastName: {
-            type: String,
-            required: true
-        }
+export const ContactSchema = Schema({
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
+        type: String,
+        required: true
     },
     address: {
         streetAddressOne: String,
@@ -40,6 +38,4 @@ const ContactSchema = Schema({
     }
 })
 
-const Contact = mongoose.model('Contact', ContactSchema)
-
-export default Contact
+export const Contact = mongoose.model('Contact', ContactSchema)

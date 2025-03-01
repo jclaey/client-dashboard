@@ -47,7 +47,7 @@ const Home = () => {
         <Layout>
             <div className="main">
                 <h1 style={{ marginBottom: '8rem' }}>Sign In to Your Insurance Dashboard</h1>
-                <div className="login-form">
+                <div className="submission-form">
                     <Form className="mb-4 d-flex horizontal" onSubmit={handleLogin}>
                         <Form.Group className="mb-3" controlId="email">
                             <Form.Label>Email</Form.Label>

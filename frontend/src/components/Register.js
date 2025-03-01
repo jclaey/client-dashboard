@@ -5,7 +5,6 @@ import api from '../api.js'
 import Layout from './Layout.js'
 import AuthContext from '../context/AuthContext.js'
 import { setAccessToken } from '../utils/authHelpers.js'
-import '../styles/login.css'
 
 const Register = () => {
     const { setAccessToken: updateContextToken, setIsSignedIn } = useContext(AuthContext)

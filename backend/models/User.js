@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 const Schema = mongoose.Schema
+import { Contact, ContactSchema } from './Contact.js'
 
 const UserSchema = Schema({
     firstName: {
@@ -20,6 +21,7 @@ const UserSchema = Schema({
         type: String,
         required: true
     },
+    contacts: [ContactSchema],
     jwtRefreshToken: {
         type: String,
         default: null

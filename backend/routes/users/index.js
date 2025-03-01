@@ -13,6 +13,6 @@ import {
 router.route('/refresh').post(asyncHandler(refreshAccessToken))
 router.route('/login').post(asyncHandler(login))
 router.route('/register').post(asyncHandler(register))
-router.route('/user-info').get(asyncHandler(getUserInfo))
+router.route('/user-info').get(auth, asyncHandler(getUserInfo))
 
 export default router

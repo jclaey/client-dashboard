@@ -32,7 +32,7 @@ const Home = () => {
             setIsSignedIn(true)
 
             setTimeout(() => {
-                navigate('/')
+                navigate('/dashboard')
             }, 100)
 
         } catch (err) {

@@ -11,18 +11,26 @@ export const AuthProvider = ({ children }) => {
         console.log("🔹 Webpack Injected NODE_ENV:", process.env.NODE_ENV)
         console.log("🔹 Checking authentication on page load...")
 
+        if (!accessToken && !document.cookie.includes("refreshToken")) {
+            console.warn("❌ No refresh token found in cookies. Logging out user...")
+            setAccessToken(null)
+            setIsSignedIn(false)
+            sessionStorage.removeItem("accessToken")
+            return
+        }
+
         if (accessToken) {
             console.log("✅ Access token already exists, skipping refresh check.")
             return
         }
 
-        // if (process.env.NODE_ENV !== 'production' && !document.cookie.includes("refreshToken")) {
-        //     console.warn("❌ No refresh token found in cookies. Logging out user...")
-        //     setAccessToken(null)
-        //     setIsSignedIn(false)
-        //     sessionStorage.removeItem("accessToken")
-        //     return
-        // }
+        if (process.env.NODE_ENV !== 'production' && !document.cookie.includes("refreshToken")) {
+            console.warn("❌ No refresh token found in cookies. Logging out user...")
+            setAccessToken(null)
+            setIsSignedIn(false)
+            sessionStorage.removeItem("accessToken")
+            return
+        }
 
         const checkAuth = async () => {
             try {

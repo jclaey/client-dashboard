@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react"
-import { Button, Card, Form, Container, Row, Col } from 'react-bootstrap'
+import { Button, Card, Row, Col } from 'react-bootstrap'
 import { Link } from 'react-router-dom'
 import api from '../api.js'
 import Layout from "./Layout.js"
@@ -75,7 +75,6 @@ const Dashboard = () => {
                 <div>
                     <strong>Phone Number:</strong> {contact.phoneNumber}
                 </div>
-                {/* Render policies for this contact */}
                 {contact.policies && renderPolicies(contact.policies)}
                 </Card.Text>
             </Card.Body>

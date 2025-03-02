@@ -52,6 +52,12 @@ const NavigationBar = () => {
                                     Dashboard
                                 </Button>
                             </Link>
+                            <Link to="/add-contact" style={{ marginRight: '1rem' }}>
+                                <Button variant="success">
+                                    <i className="fa-solid fa-plus" style={{  marginRight: '0.5rem' }}></i>
+                                    Add New Contact
+                                </Button>
+                            </Link>
                             <Button variant="danger" onClick={handleLogout}>
                                 <i className="fa-solid fa-right-from-bracket" style={{ marginRight: '0.5rem' }}></i>
                                 Logout

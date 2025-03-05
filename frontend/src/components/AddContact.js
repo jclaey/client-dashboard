@@ -85,8 +85,8 @@ const AddContact = () => {
             console.log("Contact added:", response.data)
             window.location.href = '/dashboard'
         } catch (err) {
-            console.error("Error creating post:", err)
-            setError("Failed to create post.")
+            console.error("Error creating contact:", err)
+            setError("Failed to create contact.")
         } finally {
             setLoading(false)
         }

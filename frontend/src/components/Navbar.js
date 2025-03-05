@@ -35,13 +35,13 @@ const NavigationBar = () => {
 
     return (
         <Navbar bg="light" expand="lg" style={{ height: '100px' }}>
-            <Navbar.Brand as={Link} to="/" style={{ marginLeft: '2rem', fontSize: '28px' }}>
+            <Navbar.Brand as={Link} to={`${isSignedIn ? '/dashboard' : '/'}`} style={{ marginLeft: '2rem', fontSize: '28px' }}>
                 My Dashboard
             </Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="me-auto">
-                    <StyledLink to="/" fontSize={20}>Home</StyledLink>
+                    <StyledLink to={`${isSignedIn ? '/dashboard' : '/'}`} fontSize={20}>Home</StyledLink>
                 </Nav>
                 <div style={{ marginRight: '5rem' }}>
                     {isSignedIn && (

@@ -2,6 +2,14 @@ import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 const Schema = mongoose.Schema
 
+const PolicySchema = new Schema({
+    company: String,
+    type: String,
+    name: String,
+    activeDate: Date,
+    expiryDate: Date,
+})
+
 const UserSchema = Schema({
     firstName: {
         type: String,
@@ -42,15 +50,7 @@ const UserSchema = Schema({
             work: String,
             home: String
         },
-        policies: [
-            {
-                company: String,
-                type: String,
-                name: String,
-                activeDate: Date,
-                expiryDate: Date
-            }
-        ],
+        policies: [PolicySchema],
         image: {
             path: String,
             filename: String

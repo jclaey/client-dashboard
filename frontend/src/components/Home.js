@@ -7,7 +7,7 @@ import AuthContext from '../context/AuthContext.js'
 import { setAccessToken } from '../utils/authHelpers.js'
 
 const Home = () => {
-    const { setAccessToken: updateContextToken, setIsSignedIn } = useContext(AuthContext)
+    const { setAccessToken: updateContextToken, setIsSignedIn, isSignedIn } = useContext(AuthContext)
     const navigate = useNavigate()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -49,6 +49,7 @@ const Home = () => {
                 <h1 style={{ marginBottom: '8rem' }}>Sign In to Your Insurance Dashboard</h1>
                 <div className="submission-form">
                     <Form className="mb-4 d-flex horizontal" onSubmit={handleLogin}>
+                        {error && <Alert variant="danger">{error}</Alert>}
                         <Form.Group className="mb-3" controlId="email">
                             <Form.Label>Email</Form.Label>
                             <Form.Control 
@@ -67,7 +68,9 @@ const Home = () => {
                                 onChange={(e) => setPassword(e.target.value)}
                             />
                         </Form.Group>
-                        <Button type="submit" variant="primary" className='mb-3'>Sign In</Button>
+                        <Button type="submit" variant="primary" className='mb-3'>
+                            {loading ? 'Signing In...' : 'Sign In'}
+                        </Button>
                         <div className='text-center'>
                             New user? Register <Link to='/register'>here</Link>
                         </div>
